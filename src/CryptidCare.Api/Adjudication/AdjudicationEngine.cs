@@ -15,12 +15,13 @@ public class AdjudicationEngine(
             if (result.IsRejected) return result;
         }
 
-        // Apply modifier rules. They all return a delta to add to the quantity or 0
-        var totalDelta = modifierRules.Sum(modifier => modifier.Apply(claim).QuantityDelta);
-        var finalQuantity = claim.Quantity + totalDelta;
+        // Pipeline: each modifier sees the quantity as left by the previous one
+        foreach (var modifier in modifierRules)
+        {
+            claim.Quantity += modifier.Apply(claim).QuantityDelta;
+        }
 
-        claim.Quantity = finalQuantity;
-        claim.TotalCost = finalQuantity * claim.Medicine.BaseCost;
+        claim.TotalCost = claim.Quantity * claim.Medicine.BaseCost;
 
         return AdjudicationResult.Pass();
     }
