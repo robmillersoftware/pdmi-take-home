@@ -1,6 +1,7 @@
 using CryptidCare.Api.Adjudication;
 using CryptidCare.Api.Adjudication.Rules;
 using CryptidCare.Api.Data;
+using CryptidCare.Api.Middleware;
 using CryptidCare.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ builder.Services.AddScoped<AdjudicationEngine>();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ApiKeyMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
