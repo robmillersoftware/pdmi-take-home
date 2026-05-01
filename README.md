@@ -156,5 +156,6 @@ src/CryptidCare.Api/
 
 tests/CryptidCare.Api.Tests/
 ├── Adjudication/           # Per-rule and engine tests
-└── Controllers/            # Controller tests with mocked service
+├── Controllers/            # Controller tests with mocked service
+└── Services/               # ClaimService tests with EF Core in-memory database
 ```

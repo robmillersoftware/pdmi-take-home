@@ -15,8 +15,9 @@ public class ClaimServiceTests : IDisposable
     private readonly AdjudicationEngine _engine;
     private readonly ClaimService _claimService;
 
-    private readonly Patient _werewolf = new() { Id = 1, Name = "Lupin", Species = Species.Werewolf, HeadCount = 1, IsActive = true };
-    private readonly Patient _hydra   = new() { Id = 2, Name = "Lernie", Species = Species.Hydra,    HeadCount = 3, IsActive = true };
+    private readonly Patient _werewolf  = new() { Id = 1, Name = "Lupin",  Species = Species.Werewolf, HeadCount = 1, IsActive = true };
+    private readonly Patient _hydra    = new() { Id = 2, Name = "Lernie", Species = Species.Hydra,    HeadCount = 3, IsActive = true };
+    private readonly Patient _inactive = new() { Id = 3, Name = "Ghost",  Species = Species.Phoenix,  HeadCount = 1, IsActive = false };
     private readonly Medicine _safe   = new() { Id = 1, Name = "Wolfsbane Tonic",  ContainsSilver = false, BaseCost = 10m };
     private readonly Medicine _silver = new() { Id = 2, Name = "Silvadene Cream",  ContainsSilver = true,  BaseCost = 20m };
 
@@ -27,7 +28,7 @@ public class ClaimServiceTests : IDisposable
             .Options;
 
         _db = new CryptidCareDbContext(options);
-        _db.Patients.AddRange(_werewolf, _hydra);
+        _db.Patients.AddRange(_werewolf, _hydra, _inactive);
         _db.Medicines.AddRange(_safe, _silver);
         _db.SaveChanges();
 
@@ -97,6 +98,14 @@ public class ClaimServiceTests : IDisposable
         var request = new ClaimRequest(PatientId: 1, MedicineId: 99, Quantity: 1);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _claimService.SubmitClaimAsync(request));
+    }
+
+    [Fact]
+    public async Task SubmitClaimAsync_InactivePatient_ThrowsInvalidOperationException()
+    {
+        var request = new ClaimRequest(PatientId: 3, MedicineId: 1, Quantity: 1);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _claimService.SubmitClaimAsync(request));
     }
 
     // --- CheckClaimAsync ---

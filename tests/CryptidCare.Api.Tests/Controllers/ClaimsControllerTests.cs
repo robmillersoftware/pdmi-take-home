@@ -87,4 +87,24 @@ public class ClaimsControllerTests
 
         Assert.IsType<NotFoundObjectResult>(result);
     }
+
+    [Fact]
+    public async Task Submit_WhenPatientInactive_ReturnsBadRequest()
+    {
+        _claimService.SubmitClaimAsync(_request).Throws(new InvalidOperationException("Patient 1 is not active and cannot submit claims."));
+
+        var result = await _sut.Submit(_request);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Check_WhenPatientInactive_ReturnsBadRequest()
+    {
+        _claimService.CheckClaimAsync(_request).Throws(new InvalidOperationException("Patient 1 is not active and cannot submit claims."));
+
+        var result = await _sut.Check(_request);
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
 }

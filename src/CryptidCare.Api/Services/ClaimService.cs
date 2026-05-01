@@ -37,6 +37,9 @@ public class ClaimService(CryptidCareDbContext db, AdjudicationEngine engine) : 
         var patient = await db.Patients.FindAsync(request.PatientId)
             ?? throw new KeyNotFoundException($"Patient {request.PatientId} not found.");
 
+        if (!patient.IsActive)
+            throw new InvalidOperationException($"Patient {request.PatientId} is not active and cannot submit claims.");
+
         var medicine = await db.Medicines.FindAsync(request.MedicineId)
             ?? throw new KeyNotFoundException($"Medicine {request.MedicineId} not found.");
 
