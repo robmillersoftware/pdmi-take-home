@@ -1,3 +1,4 @@
+using CryptidCare.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptidCare.Api.Data;
@@ -8,4 +9,8 @@ public class CryptidCareDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Medicine> Medicines => Set<Medicine>();
+    public DbSet<Claim> Claims => Set<Claim>();
 }
