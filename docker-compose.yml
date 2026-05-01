@@ -7,3 +7,24 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "CryptidCare_Dev1" -C -Q "SELECT 1" -b
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    ports:
+      - "5043:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=CryptidCare;User Id=sa;Password=CryptidCare_Dev1;TrustServerCertificate=True;"
+      ApiKey: "cryptid-care-dev-key"
+    depends_on:
+      db:
+        condition: service_healthy
