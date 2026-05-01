@@ -8,18 +8,16 @@ public class AdjudicationEngine(
 {
     public AdjudicationResult Execute(Claim claim)
     {
+        // Apply validation rules first
         foreach (var rule in validationRules)
         {
             var result = rule.Apply(claim);
             if (result.IsRejected) return result;
         }
 
-        var finalQuantity = claim.Quantity;
-        foreach (var modifier in modifierRules)
-        {
-            var mod = modifier.Apply(claim);
-            finalQuantity *= mod.QuantityMultiplier;
-        }
+        // Apply modifier rules. They all return a delta to add to the quantity or 0
+        var totalDelta = modifierRules.Sum(modifier => modifier.Apply(claim).QuantityDelta);
+        var finalQuantity = claim.Quantity + totalDelta;
 
         claim.Quantity = finalQuantity;
         claim.TotalCost = finalQuantity * claim.Medicine.BaseCost;

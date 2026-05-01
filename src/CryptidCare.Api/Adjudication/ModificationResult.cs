@@ -2,5 +2,5 @@ namespace CryptidCare.Api.Adjudication;
 
 public record ModificationResult
 {
-    public int QuantityMultiplier { get; init; } = 1;
+    public int QuantityDelta { get; init; } = 0;
 }

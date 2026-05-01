@@ -9,23 +9,24 @@ public class HydraMultiplierRuleTests
     private readonly HydraMultiplierRule _sut = new();
 
     [Fact]
-    public void Apply_Hydra_ReturnsHeadCountAsMultiplier()
+    public void Apply_Hydra_ReturnsDeltaToScaleByHeadCount()
     {
+        // quantity=3, headCount=5 → final should be 15 → delta = 3 * (5-1) = 12
         var claim = BuildClaim(Species.Hydra, headCount: 5);
 
         var result = _sut.Apply(claim);
 
-        Assert.Equal(5, result.QuantityMultiplier);
+        Assert.Equal(12, result.QuantityDelta);
     }
 
     [Fact]
-    public void Apply_NonHydra_ReturnsMultiplierOfOne()
+    public void Apply_NonHydra_ReturnsZeroDelta()
     {
         var claim = BuildClaim(Species.Werewolf, headCount: 1);
 
         var result = _sut.Apply(claim);
 
-        Assert.Equal(1, result.QuantityMultiplier);
+        Assert.Equal(0, result.QuantityDelta);
     }
 
     private static Claim BuildClaim(Species species, int headCount) => new()

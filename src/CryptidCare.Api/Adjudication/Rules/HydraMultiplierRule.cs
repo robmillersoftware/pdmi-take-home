@@ -8,7 +8,7 @@ public class HydraMultiplierRule : IModifierRule
     public ModificationResult Apply(Claim claim)
     {
         if (claim.Patient.Species == Species.Hydra)
-            return new ModificationResult { QuantityMultiplier = claim.Patient.HeadCount };
+            return new ModificationResult { QuantityDelta = claim.Quantity * (claim.Patient.HeadCount - 1) };
 
         return new ModificationResult();
     }
